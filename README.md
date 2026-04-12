@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Google Maps MCP — red map pin with MCP badge" width="160"/>
+</p>
+
 # Google Maps MCP Server
 
 [![PyPI version](https://img.shields.io/pypi/v/gmaps-mcp.svg)](https://pypi.org/project/gmaps-mcp/)
