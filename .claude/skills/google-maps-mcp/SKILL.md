@@ -1,6 +1,6 @@
 ---
 name: google-maps-mcp
-description: Google Maps MCP — find places, get directions, geocode addresses, reverse geocode coordinates, look up place details and reviews. Use when the user asks about restaurants, coffee shops, landmarks, travel time, walking/driving routes, addresses, GPS coordinates, or anything near a real-world location.
+description: Google Maps MCP tools — places search, directions, geocoding, reverse geocoding, place details. Use for restaurants, coffee shops, landmarks, travel time, walking/driving routes, addresses, GPS coordinates, anything near a real-world location.
 ---
 
 # Using the google-maps-mcp MCP server
