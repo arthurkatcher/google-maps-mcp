@@ -1,19 +1,49 @@
 [project]
-name = "google-maps-mcp"
+name = "gmaps-mcp"
 version = "0.1.0"
-description = "MCP server for Google Maps search capabilities"
+description = "MCP server for Google Maps — places search, directions, geocoding. Works with Claude Desktop, Cursor, Claude Code."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Arthur Katcher", email = "192321283+arthurkatcher@users.noreply.github.com" }]
 requires-python = ">=3.10"
+keywords = ["mcp", "model-context-protocol", "google-maps", "claude", "cursor", "ai-agents", "places", "geocoding"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "mcp>=1.0.0",
     "httpx>=0.27.0",
     "python-dotenv>=1.0.0",
     "uvicorn>=0.30.0",
-    "openai-agents>=0.1.0",
+    "starlette>=0.37.0",
 ]
+
+[project.optional-dependencies]
+examples = [
+    "openai-agents>=0.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/arthurkatcher/google-maps-mcp"
+Repository = "https://github.com/arthurkatcher/google-maps-mcp"
+Issues = "https://github.com/arthurkatcher/google-maps-mcp/issues"
+
+[project.scripts]
+gmaps-mcp = "google_maps_mcp.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/google_maps_mcp"]
 
 [dependency-groups]
 dev = [
