@@ -234,13 +234,23 @@ cp .env.example .env  # edit with your API key
 python run.py
 ```
 
-Server listens on `http://0.0.0.0:8000` by default, MCP endpoint at `/mcp/`, health check at `/health`. Set `MCP_API_KEY` in `.env` to require `X-API-Key` header authentication; leave it unset for dev mode.
+Server listens on `http://127.0.0.1:8000` by default, MCP endpoint at `/mcp/`, health check at `/health`. For local-only use you can leave `MCP_API_KEY` unset.
 
-To expose over the internet:
+> ⚠️  **Before exposing the server publicly** (ngrok, reverse proxy, LAN, etc.):
+> set `MCP_API_KEY` to a random secret. Without it, anyone who reaches the URL
+> can run searches against your billed `GOOGLE_MAPS_API_KEY`. Also bind to
+> `127.0.0.1` and let your tunnel/proxy forward from there, rather than
+> binding `0.0.0.0` directly.
 
 ```bash
+# .env
+MCP_API_KEY=$(openssl rand -hex 32)
+MCP_HOST=127.0.0.1
+
+# then
+python run.py
 ngrok http 8000
-# then point MCP clients at https://your-ngrok-url.ngrok-free.dev/mcp/
+# clients call https://your-ngrok-url.ngrok-free.dev/mcp/ with X-API-Key: <secret>
 ```
 
 ## Pricing

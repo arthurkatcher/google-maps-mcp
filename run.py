@@ -27,15 +27,23 @@ def main():
         print("Please set it in your .env file.")
         sys.exit(1)
     
-    # Optional but recommended
-    mcp_api_key = os.getenv("MCP_API_KEY")
-    if not mcp_api_key:
-        print("WARNING: MCP_API_KEY not set. Server will run without authentication.")
-        print("This is only recommended for development.")
-    
     # Get configuration
-    host = os.getenv("MCP_HOST", "0.0.0.0")
+    mcp_api_key = os.getenv("MCP_API_KEY")
+    host = os.getenv("MCP_HOST", "127.0.0.1")
     port = int(os.getenv("MCP_PORT", "8000"))
+
+    if not mcp_api_key:
+        if host in ("127.0.0.1", "localhost", "::1"):
+            print("INFO: MCP_API_KEY not set — server is loopback-only.")
+        else:
+            print(
+                f"WARNING: MCP_API_KEY is not set and the server is binding "
+                f"{host} (non-loopback). Anyone who can reach this host can "
+                f"use your GOOGLE_MAPS_API_KEY and bill your Google Cloud "
+                f"account. Set MCP_API_KEY=<random-string> in .env, or set "
+                f"MCP_HOST=127.0.0.1.",
+                file=sys.stderr,
+            )
     
     print(f"Starting Google Maps MCP Server...")
     print(f"  Host: {host}")

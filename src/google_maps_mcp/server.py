@@ -1,5 +1,6 @@
 """MCP server with HTTP transport and API key authentication."""
 
+import hmac
 import os
 from typing import Optional
 from starlette.applications import Starlette
@@ -189,7 +190,7 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
             # If no MCP_API_KEY is set, allow all requests (development mode)
             return await call_next(request)
         
-        if api_key != expected_key:
+        if not api_key or not hmac.compare_digest(api_key, expected_key):
             return JSONResponse(
                 {"error": "Invalid or missing API key. Provide X-API-Key header."},
                 status_code=401
@@ -250,7 +251,7 @@ if __name__ == "__main__":
     
     app = create_app()
     
-    host = os.getenv("MCP_HOST", "0.0.0.0")
+    host = os.getenv("MCP_HOST", "127.0.0.1")
     port = int(os.getenv("MCP_PORT", "8000"))
     
     uvicorn.run(app, host=host, port=port)
