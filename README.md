@@ -249,9 +249,42 @@ MCP_HOST=127.0.0.1
 
 # then
 python run.py
-ngrok http 8000
+ngrok http 8000 --host-header=rewrite
 # clients call https://your-ngrok-url.ngrok-free.dev/mcp/ with X-API-Key: <secret>
 ```
+
+> ℹ️  **Why `--host-header=rewrite`.** The MCP Python SDK's HTTP transport
+> validates the `Host` header to block DNS-rebinding attacks against
+> localhost servers. ngrok's default forwards the public hostname, which the
+> SDK rejects with `421 Invalid Host header`. `--host-header=rewrite` makes
+> ngrok forward the upstream `Host` (`127.0.0.1:8000`), which passes the
+> check. The same reasoning applies to other tunnels and reverse proxies —
+> set the upstream `Host` to your bind address.
+
+### Security considerations
+
+When you run `gmaps-mcp` over HTTP, treat `MCP_API_KEY` as a credential that
+gates a billed Google Cloud account. A few operator-side defaults worth
+having in place:
+
+- **Rotate the key on suspected exposure.** It's a single env var; pasting it
+  in a screenshot, committed log, or shared session is enough to leak it.
+- **Set a Google Cloud billing alert** on the GCP project that holds your
+  `GOOGLE_MAPS_API_KEY`. Pick a threshold that's well under whatever number
+  would ruin your week. This is the cheap backstop against any leak —
+  your key, the MCP key, or a third-party scraping the tunnel URL.
+- **Restrict the Google Maps API key** to just the three APIs `gmaps-mcp`
+  uses (Places API New, Directions, Geocoding) under *APIs & Services →
+  Credentials → Edit*. Optionally pin it to your home/server IP for
+  defense in depth.
+- **No server-side rate limiting yet.** A leaked `MCP_API_KEY` lets an
+  attacker burn quota as fast as their bandwidth allows. Until that lands,
+  the billing alert is your circuit breaker.
+- **Don't expose `MCP_HOST=0.0.0.0` without a key.** If you do, the server
+  refuses to start (this is enforced in 0.1.3+ — a deliberate guardrail
+  added after [GHSA-52cq-7v8r-62c6][1]).
+
+[1]: https://github.com/arthurkatcher/google-maps-mcp/security/advisories/GHSA-52cq-7v8r-62c6
 
 ## Pricing
 
