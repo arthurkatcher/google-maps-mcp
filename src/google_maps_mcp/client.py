@@ -1,8 +1,12 @@
 """Google Maps Places API client."""
 
 import os
+import re
 from typing import Optional
 import httpx
+
+
+_PLACE_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
 class GoogleMapsClient:
@@ -120,13 +124,23 @@ class GoogleMapsClient:
     
     async def get_place_details(self, place_id: str) -> dict:
         """Get detailed information about a specific place.
-        
+
         Args:
-            place_id: Google Place ID (e.g., "ChIJN1t_tDeuEmsRUsoyG83frY4")
-        
+            place_id: Google Place ID (e.g., "ChIJN1t_tDeuEmsRUsoyG83frY4").
+                     Accepts the bare ID or the "places/<id>" form returned by
+                     the Places API; both are validated to alphanumerics,
+                     underscore, and hyphen only.
+
         Returns:
             Dictionary with detailed place information.
         """
+        if place_id.startswith("places/"):
+            place_id = place_id[len("places/"):]
+        if not _PLACE_ID_PATTERN.match(place_id):
+            raise ValueError(
+                f"Invalid place_id format: {place_id!r}. Expected "
+                f"alphanumerics, underscore, or hyphen only."
+            )
         url = f"https://places.googleapis.com/v1/places/{place_id}"
         
         field_mask = [

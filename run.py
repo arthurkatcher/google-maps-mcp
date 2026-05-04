@@ -36,13 +36,12 @@ def main():
         if host in ("127.0.0.1", "localhost", "::1"):
             print("INFO: MCP_API_KEY not set — server is loopback-only.")
         else:
-            print(
-                f"WARNING: MCP_API_KEY is not set and the server is binding "
-                f"{host} (non-loopback). Anyone who can reach this host can "
-                f"use your GOOGLE_MAPS_API_KEY and bill your Google Cloud "
-                f"account. Set MCP_API_KEY=<random-string> in .env, or set "
-                f"MCP_HOST=127.0.0.1.",
-                file=sys.stderr,
+            raise SystemExit(
+                f"ERROR: MCP_API_KEY must be set when binding a non-loopback "
+                f"host ({host}). Without it, anyone who can reach this URL "
+                f"can use your GOOGLE_MAPS_API_KEY and bill your Google "
+                f"Cloud account. Set MCP_API_KEY=<random-secret> in .env, "
+                f"or set MCP_HOST=127.0.0.1."
             )
     
     print(f"Starting Google Maps MCP Server...")
