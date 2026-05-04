@@ -246,13 +246,21 @@ if __name__ == "__main__":
     # For development - can also use uvicorn directly
     import uvicorn
     from dotenv import load_dotenv
-    
+
     load_dotenv()
-    
-    app = create_app()
-    
+
     host = os.getenv("MCP_HOST", "127.0.0.1")
     port = int(os.getenv("MCP_PORT", "8000"))
-    
+
+    if not os.getenv("MCP_API_KEY") and host not in ("127.0.0.1", "localhost", "::1"):
+        raise SystemExit(
+            f"ERROR: MCP_API_KEY must be set when binding a non-loopback "
+            f"host ({host}). Without it, anyone who can reach this URL "
+            f"can use your GOOGLE_MAPS_API_KEY and bill your Google "
+            f"Cloud account. Set MCP_API_KEY=<random-secret>, or set "
+            f"MCP_HOST=127.0.0.1."
+        )
+
+    app = create_app()
     uvicorn.run(app, host=host, port=port)
 
